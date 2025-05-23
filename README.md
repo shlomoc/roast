@@ -108,18 +108,39 @@ AI Roast Machine is a playful web app that uses state-of-the-art AI models to ge
 
 ## Running Tests
 
-*No test suite is currently set up.*  
-To add tests, consider integrating [Jest](https://jestjs.io/) or [React Testing Library](https://testing-library.com/):
+This project uses [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/) for unit and integration testing.
 
-```bash
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom
-```
+### Running the Test Suite
 
-Then, add your test scripts and run:
+To run all tests:
 
 ```bash
 npm test
+# or
+yarn test
+# or
+pnpm test
 ```
+
+Test files are located in a parallel `tests/` directory that mirrors the structure of the `src/` folder:
+- `tests/app/api/`: API route tests
+- `tests/components/`: Component tests
+
+### Writing Tests
+
+- Place new test files in the appropriate location in the `tests/` directory.
+- Tests should mirror the structure of the `src/` directory (e.g., `src/app/api/example/route.ts` → `tests/app/api/example/route.test.ts`).
+- Use Jest and React Testing Library APIs for assertions and rendering React components.
+
+### Coverage
+
+To generate a code coverage report:
+
+```bash
+npm test -- --coverage
+```
+
+The coverage report will be output in the `coverage/` directory.
 
 ### Explanations & Best Practices
 

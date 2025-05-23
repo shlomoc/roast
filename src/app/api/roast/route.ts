@@ -55,6 +55,13 @@ export async function POST(req: NextRequest) {
     });
 
     console.log('OpenRouter API response status:', response.status);
+
+    if (!response.ok) {
+      const errorData = await response.text(); // Get error details from OpenRouter response
+      console.error('OpenRouter API error response:', errorData);
+      throw new Error(`OpenRouter API request failed with status ${response.status}: ${errorData}`);
+    }
+
     const data = await response.json();
     console.log('OpenRouter API response data:', JSON.stringify(data, null, 2));
     const roast = data.choices?.[0]?.message?.content || "No roast generated.";
