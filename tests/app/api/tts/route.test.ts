@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 // Mock the global fetch function
 global.fetch = jest.fn();
@@ -6,13 +6,13 @@ global.fetch = jest.fn();
 describe('POST /api/tts', () => {
   const originalEnv = { ...process.env }; // Deep copy original env
 
-  const mockRequest = (body: any) => {
+  const mockRequest = (body: Record<string, unknown>) => {
     return {
       json: async () => body,
     } as NextRequest;
   };
 
-  let POST_handler: any; // To hold the dynamically imported POST handler
+  let POST_handler: (request: NextRequest) => Promise<Response>; // To hold the dynamically imported POST handler
 
   beforeEach(() => {
     jest.resetModules(); // Reset modules before each test
@@ -28,7 +28,7 @@ describe('POST /api/tts', () => {
   describe('when ELEVENLABS_API_KEY is set', () => {
     beforeEach(async () => {
       process.env.ELEVENLABS_API_KEY = 'test-elevenlabs-key';
-      const routeModule = await import('./route');
+      const routeModule = await import('@/app/api/tts/route');
       POST_handler = routeModule.POST;
     });
 
@@ -106,7 +106,7 @@ describe('POST /api/tts', () => {
   describe('when ELEVENLABS_API_KEY is NOT set', () => {
     beforeEach(async () => {
       delete process.env.ELEVENLABS_API_KEY;
-      const routeModule = await import('./route');
+      const routeModule = await import('@/app/api/tts/route');
       POST_handler = routeModule.POST;
     });
 
@@ -122,7 +122,7 @@ describe('POST /api/tts', () => {
 
   it('should return 400 if text is not provided', async () => {
     // API key presence doesn't matter for this validation, but load module for POST_handler
-    const routeModule = await import('./route');
+    const routeModule = await import('@/app/api/tts/route');
     POST_handler = routeModule.POST;
 
     const request = mockRequest({}); // No text field
@@ -135,7 +135,7 @@ describe('POST /api/tts', () => {
 
   it('should return 500 for unexpected errors during API call', async () => {
     process.env.ELEVENLABS_API_KEY = 'test-elevenlabs-key';
-    const routeModule = await import('./route');
+    const routeModule = await import('@/app/api/tts/route');
     POST_handler = routeModule.POST;
 
     (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network connection error'));
@@ -147,4 +147,4 @@ describe('POST /api/tts', () => {
     expect(response.status).toBe(500);
     expect(responseBody.error).toBe('Internal server error');
   });
-});
+}); 

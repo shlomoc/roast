@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Button } from './button'; // Adjust the import path as needed
-
-import { Slot } from '@radix-ui/react-slot';
+import { Button } from '@/components/ui/button';
 
 describe('Button Component', () => {
   test('renders button with children', () => {
@@ -27,4 +25,4 @@ describe('Button Component', () => {
     // More robustly, check for a class that is always there from buttonVariants
     expect(linkElement).toHaveClass('inline-flex'); // From base styles in buttonVariants
   });
-});
+}); 

@@ -7,13 +7,13 @@ describe('POST /api/roast', () => {
   const originalEnv = { ...process.env }; // Deep copy original env
 
   // Define a helper to mock NextRequest
-  const mockRequest = (body: any) => {
+  const mockRequest = (body: Record<string, unknown>) => {
     return {
       json: async () => body,
     } as NextRequest;
   };
 
-  let POST_handler: any; // To hold the dynamically imported POST handler
+  let POST_handler: (request: NextRequest) => Promise<Response>; // To hold the dynamically imported POST handler
 
   beforeEach(() => {
     jest.resetModules(); // Reset modules before each test to re-evaluate module-level constants
@@ -30,7 +30,7 @@ describe('POST /api/roast', () => {
     beforeEach(async () => {
       process.env.OPENROUTER_API_KEY = 'test-key';
       // Dynamically import the route to get the POST handler with the updated environment variable
-      const routeModule = await import('./route');
+      const routeModule = await import('@/app/api/roast/route');
       POST_handler = routeModule.POST;
     });
 
@@ -160,7 +160,7 @@ describe('POST /api/roast', () => {
     beforeEach(async () => {
       delete process.env.OPENROUTER_API_KEY; // Ensure key is not set
       // Dynamically import the route to get the POST handler with the updated environment variable
-      const routeModule = await import('./route');
+      const routeModule = await import('@/app/api/roast/route');
       POST_handler = routeModule.POST;
     });
 
@@ -186,7 +186,7 @@ describe('POST /api/roast', () => {
     // This test doesn't strictly need OPENROUTER_API_KEY to be set or unset
     // as it should fail before the key check.
     // However, to be safe and consistent with module reloading:
-    const routeModule = await import('./route');
+    const routeModule = await import('@/app/api/roast/route');
     POST_handler = routeModule.POST;
     const request = mockRequest({ model: 'gpt-4.1', intensity: '5' });
     const response = await POST_handler(request);
@@ -197,7 +197,7 @@ describe('POST /api/roast', () => {
   });
 
   it('should return 400 if model is missing', async () => {
-    const routeModule = await import('./route');
+    const routeModule = await import('@/app/api/roast/route');
     POST_handler = routeModule.POST;
     const request = mockRequest({ image: 'test-image', intensity: '5' });
     const response = await POST_handler(request);
@@ -208,7 +208,7 @@ describe('POST /api/roast', () => {
   });
 
   it('should return 400 if intensity is missing', async () => {
-    const routeModule = await import('./route');
+    const routeModule = await import('@/app/api/roast/route');
     POST_handler = routeModule.POST;
     const request = mockRequest({ image: 'test-image', model: 'gpt-4.1' });
     const response = await POST_handler(request);
@@ -217,4 +217,4 @@ describe('POST /api/roast', () => {
     expect(response.status).toBe(400);
     expect(responseBody.error).toBe('Missing required fields.');
   });
-});
+}); 
